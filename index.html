@@ -15,11 +15,11 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>レシート因子メーカー</title>
-  <meta property="og:title" content="レシート因子メーカー">
+  <title>Receipt Spark Generator</title>
+  <meta property="og:title" content="Receipt Spark Generator">
   <meta property="og:type" content="article">
-  <meta property="og:site_name" content="レシート因子メーカー">
-  <meta property="og:description" content="ウマ娘の因子やスキル一覧のスクリーンショットを連結出来ます。">
+  <meta property="og:site_name" content="Receipt Spark Generator">
+  <meta property="og:description" content="Stitches together screenshots of Umamusume spark and skill lists.">
   <meta property="og:url" content="https://lt900ed.github.io/receipt_factor">
   <meta property="og:image" content="https://lt900ed.github.io/receipt_factor/img/header.jpg">
   <meta name="twitter:site" content="@lt900ed">
@@ -36,7 +36,7 @@
   <script src="https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
 </head>
 <body class="body">
-  <!-- ローディング画面 -->
+  <!-- Loading screen -->
   <div id="loading" class="hidden">
     <div class="sk-fading-circle">
       <div class="sk-circle1 sk-circle"></div>
@@ -56,7 +56,7 @@
   </div>
   <header id="pageHeader">
     <div class="logo">
-      <h1><a href="./">レシート因子メーカー</a></h1>
+      <h1><a href="./">Receipt Spark Generator</a></h1>
     </div>
   </header>
   <div class="toolbar">
@@ -69,14 +69,14 @@
         <form method="post" enctype="multipart/form-data">
           <div id="dragDropArea">
             <div class="drag-drop-inside">
-              <p class="drag-drop-info">ここにファイルをドロップ</p>
+              <p class="drag-drop-info">Drop files here</p>
               <p></p>
               <p class="drag-drop-buttons">
-                or <input id="fileInput" type="file" accept="image/*" multiple="multiple" value="ファイルを選択" name="photo" onChange="photoPreview(event)">
+                or <input id="fileInput" type="file" accept="image/*" multiple="multiple" value="Choose files" name="photo" onChange="photoPreview(event)">
               </p>
-              <p id="uiUploadFromClipboard">or <button type="button" id="btnUploadFromClipboard">クリップボードから貼り付け</button></p>
-              <p>自動で並び替えるので順番は気にしなくてOK！</p>
-              <p>※手動で切り出したスクショは未対応です。PC版であればAlt+PrintScreenなど、ウマ娘のウィンドウを自動で切り出す機能でスクショを用意して下さい。</p>
+              <p id="uiUploadFromClipboard">or <button type="button" id="btnUploadFromClipboard">Paste from clipboard</button></p>
+              <p>Order is handled automatically, so the order you drop them doesn't matter!</p>
+              <p>Manually cropped screenshots are not supported. On PC, please use Alt+PrintScreen or similar to capture the Uma Musume window automatically.</p>
             </div>
           </div>
           <div id="PreAlert">
@@ -94,19 +94,19 @@
                   <li>
                     <div class="considerWrap">
                       <input type="checkbox" class="checkInput" id="showHeader" checked>
-                      <label class="checkLabel" for="showHeader">ヘッダーの表示</label>
+                      <label class="checkLabel" for="showHeader">Show header</label>
                     </div>
                   </li>
                   <li>
                     <div class="considerWrap">
                       <input type="checkbox" class="checkInput" id="showSkillIcon">
-                      <label class="checkLabel" for="showSkillIcon">因子にスキルアイコン追加(β)</label>
+                      <label class="checkLabel" for="showSkillIcon">Add skill icons to factors (beta)</label>
                     </div>
                   </li>
                   <!-- <li>
                     <div class="considerWrap">
                       <input type="checkbox" class="checkInput" id="considerEquips">
-                      <label class="checkLabel" for="considerEquips">閉じるボタン</label>
+                      <label class="checkLabel" for="considerEquips">Close button</label>
                     </div>
                   </li> -->
                 </ul>
@@ -114,110 +114,110 @@
             </div>
           </div>
           <div class="buttonArea">
-            <button id="btnSubmit" type="button" class="btn disable cvNotReady imgNotReady" name="submit" value="作成" onclick="generatePhoto();return false;">作成</button>
-            <button id="btnReset" type="button" class="btn disable weak imgNotReady" name="cancel" value="リセット" onclick="location.reload();return false;">リセット</button>
+            <button id="btnSubmit" type="button" class="btn disable cvNotReady imgNotReady" name="submit" value="Generate" onclick="generatePhoto();return false;">Generate</button>
+            <button id="btnReset" type="button" class="btn disable weak imgNotReady" name="cancel" value="Reset" onclick="location.reload();return false;">Reset</button>
           </div>
         </form>
       </section>
       <hr>
       <section id="overview">
         <div id="SaveBtnArea" class="buttonArea hidden">
-          <button id="btnSaveJPG" class="btn weak" value="JPGで保存" onclick="SaveOriginal(document.getElementById('canvasOutput'), 'jpg');return false;">JPGで保存</button>
-          <button id="btnSavePNG" class="btn weak" value="PNGで保存" onclick="SaveOriginal(document.getElementById('canvasOutput'), 'png');return false;">PNGで保存</button>
-          <button id="btnSaveClipBoard" class="btn weak" value="📋にコピー" onclick="SaveToClipBoard(document.getElementById('canvasOutput'));return false;">📋にコピー</button>
+          <button id="btnSaveJPG" class="btn weak" value="Save as JPG" onclick="SaveOriginal(document.getElementById('canvasOutput'), 'jpg');return false;">Save as JPG</button>
+          <button id="btnSavePNG" class="btn weak" value="Save as PNG" onclick="SaveOriginal(document.getElementById('canvasOutput'), 'png');return false;">Save as PNG</button>
+          <button id="btnSaveClipBoard" class="btn weak" value="Copy to clipboard 📋" onclick="SaveToClipBoard(document.getElementById('canvasOutput'));return false;">Copy to clipboard 📋</button>
         </div>
-        <p id="outputAreaText" class="overviewTitle">ここに結果が表示されます</p>
-        <p id="toggleSizeText" class="overviewTitle hidden">画像タップで表示サイズ切り替え</p>
+        <p id="outputAreaText" class="overviewTitle">Your combined image will appear here</p>
+        <p id="toggleSizeText" class="overviewTitle hidden">Tap the image to toggle display size</p>
         <img id="outputImage" class="hidden" src="">
         <div id="overviewOCRResult" class="hidden">
           <div class="editormd-preview-container">
-            <p class="overviewSubTitle">・検出精度向上のご協力のお願い</p>
-            <p>スキルアイコンの表示機能の精度を向上させるため因子名の誤検出パターンを収集しています。<br>
-            下のテキスト欄に表示されている検出結果をコピーし<a href="https://forms.gle/wFntwkAQKgbsniZH9" target="_blank" rel="noopener">専用フォーム</a>にお送り下さい。<br>
-            より多くのレシート因子に使えるようになるためご協力お願い致します。</p>
+            <p class="overviewSubTitle">• Help improve detection accuracy</p>
+            <p>We are collecting misrecognition patterns of factor names to improve the accuracy of the skill‑icon overlay.<br>
+            Please copy the detection results shown in the text box below and<a href="https://forms.gle/wFntwkAQKgbsniZH9" target="_blank" rel="noopener">dedicated form</a>submit them.<br>
+            Your cooperation will help us support more receipt factors.</p>
           </div>
           <textarea id="outputOCRResult" cols="50" rows="3" onclick="this.select()"></textarea>
         </div>
       </section>
       <hr>
       <section id="howto">
-        <h3>使い方</h3>
+        <h3>How to use</h3>
         <div class="markdown-body editormd-preview-container" id="memo_text">
-          <p>1.画面をスクロールしながらスクリーンショットを撮る<br>
-          ・殿堂入りウマ娘のスキル、継承、育成情報タブ、<br>
-          　チムレスコア情報、出走ウマ娘画面に対応しています。<br>
-          ・少なくとも二行ずつ重なるように撮影して下さい。<br>
-          ・スマホの通知などウマ娘の画面以外のものが映らないようにして下さい。<br>
-          ・Ver3.0からサポカ一覧、着順表など大体のスクロールする画面に対応しました。<br>
-          　これらの画面の場合はスクロール部分の約1/4が重なるように撮影して下さい。<br>
-          ・Ver3.1からチャンミ号外の連結に対応しました。<br>
-          　こちらは必ず横配置となります。左右の順番は画像の取り込み順と同じになります。<br>
-          <p>2.当サイトにスクリーンショットを取り込む<br>
-          ・取り込む順番は自由です。加工時に自動で並び替えます。<br>
-          ・不要な画像は各プレビュー画像左上の✕をタップで削除出来ます。<br>
-          ・複数キャラまとめて取り込めます。<br>
-          ・クリップボードから貼り付けは対応しているブラウザ・OSでのみ使用できます。<br>
-          　Windows 11のChrome、Edgeで動作確認しています。<br>
-          　クリップボードから貼り付けはCtrl+Vでも行なえます。</p>
-          <p>3.作成ボタンをタップ<br>
-          ・取り込んだ画像の枚数に応じて即座～数十秒時間がかかります。<br>
-          ・上手く重なり方が特定出来なかった場合単純に上下に連結します。</p>
-          <p>4.出力されたレシート画像を確認して保存ボタンをタップ<br>
-          ・複数キャラ取り込んだ場合左右に並べて出力されます。<br>
-          ・出力された画像をタップすると等倍表示と画面幅に合わせて表示を切り替えられます。<br>
-          ・リセットボタンで全てのプレビュー画像と出力結果を削除して最初からやり直せます。<br>
-          ・iOSで画像アプリに保存したい場合は画像長押しから保存して下さい。<br>
-          ・クリップボードにコピーは対応しているブラウザ・OSでのみ使用できます。<br>
-          　Windows 11のChrome、Edgeで動作確認しています。</p>
-          <p>β.因子にスキルアイコン追加<br>
-          ・各因子にスキルアイコンを追加します。<br>
-          ・シナリオ因子等の能力が上昇する因子は青いアイコンを追加します。<br>
-          ・因子名をうまく取得出来なかった場合には[？]が追加されます。<br>
-          ・取り込んだ画像の解像度が低いほど精度が下がります。縦幅1500px以上の画像を推奨します。<br>
-          ・スキル情報は<a href="https://ウマ娘.攻略.tools/" target="_blank" rel="noopener">U-tools</a>さんからご提供頂いています。</p>
+          <p>1. Take screenshots while scrolling<br>
+          • Supports the Hall of Fame horse “Skills”, “Inheritance”, and “Training Info” tabs,<br>
+            Team Race score info, and the starting order screen.<br>
+          • Ensure at least two rows overlap between shots.<br>
+          • Make sure no non‑game elements such as notifications are visible.<br>
+          • Since v3.0, most scrolling screens such as support‑card lists and results tables are supported.<br>
+            In these cases, let roughly one‑quarter of the scrolling area overlap.<br>
+          • Since v3.1, Champion’s Meeting headlines can be stitched.<br>
+            These are always arranged horizontally; left‑to‑right follows your import order.<br>
+          <p>2. Import the screenshots into this page<br>
+          • Import order is free; images are automatically sorted during processing.<br>
+          • Tap ✕ in the upper‑left of a preview to delete an unwanted image.<br>
+          • Multiple horses can be imported together.<br>
+          • Pasting from clipboard works only in browsers/OSes that support it.<br>
+            Tested with Chrome and Edge on Windows 11.<br>
+            You can also paste via Ctrl+V.</p>
+          <p>3. Tap the Generate button<br>
+          • Processing takes from instant to tens of seconds depending on the number of images.<br>
+          • If overlap cannot be determined, images are simply concatenated vertically.</p>
+          <p>4. Check the output receipt image and tap Save<br>
+          • If multiple horses were imported, they are output side‑by‑side.<br>
+          • Tap the output image to toggle between 1× and fit‑to‑width.<br>
+          • The Reset button clears all previews and results for a fresh start.<br>
+          • On iOS, long‑press the image to save it to Photos.<br>
+          • Copy to clipboard works only in browsers/OSes that support it.<br>
+            Tested with Chrome and Edge on Windows 11.</p>
+          <p>β. Add skill icons to factors<br>
+          • Adds a skill icon to each factor.<br>
+          • Scenario factors that raise stats receive a blue icon.<br>
+          • If the factor name cannot be recognized, [ ? ] is used.<br>
+          • Lower‑resolution images reduce accuracy; at least 1500 px vertical resolution is recommended.<br>
+          • Skill data provided by <a href="https://umamusume.kouryaku.tools/" target="_blank" rel="noopener">U-tools</a>.</p>
         </div>
       </section>
       <hr>
       <section id="updateLog">
-        <h3>アップデート履歴</h3>
+        <h3>Changelog</h3>
         <div class="markdown-body editormd-preview-container">
           <p>
-            Ver1.0：初公開<br>
-            Ver1.01：隣接画像検出ロジック修正<br>
-            Ver1.02：出力結果の表示サイズ切り替え機能追加、閉じるボタン複数検出時の挙動修正<br>
-            Ver1.1：クリップボードからの画像読み込み、クリップボードへの結果貼り付けに対応<br>
-            Ver1.11：大量の画像または解像度の高い画像を読み込んだ時の動作を改善<br>
-            Ver1.12：閉じるボタンより下が写っていなくても連結出来るよう修正<br>
-            Ver1.13：出力結果の背景色が指定されていなかった問題を修正<br>
-            Ver1.2：処理の進捗表示を追加<br>
-            Ver1.3：ヘッダー表示オプション追加、スクロールバーの非表示化<br>
-            Ver1.4：他ユーザーのウマ娘など通常と異なるいくつかのレイアウトに対応<br>
-            Ver1.41：GooglePlayGames版の横長な画像の取り込みに対応<br>
-            Ver1.42：異なるレイアウトの画像を同時に読み込んだ際に結果が歪む問題を修正<br>
-            Ver1.43：連結部分の切れ目が出にくくなるよう調整<br>
-            Ver1.44：少し暗いスクリーンショットの取り込みに暫定対応<br>
-            Ver1.45：位置が特定出来ない画像があった場合末尾に単純結合するよう修正<br>
-            Ver1.5：結合時のズレが生じにくくなるよう修正<br>
-            Ver1.51：閉じるボタンの輪郭が薄くても検出できるよう調整<br>
-            Ver1.6：Ctrl+Vで📋から貼り付け出来る機能を追加<br>
-            Ver1.61：閉じるボタンの検出が失敗しにくくなるよう修正<br>
-            Ver1.62：新機能のための内部ロジック一部修正、隣接判定のしきい値調整<br>
-            Ver2.0：スキルアイコン表示機能追加(β版) 協力：<a href="https://ウマ娘.攻略.tools/" target="_blank" rel="noopener">U-tools</a>さん<br>
-            Ver2.01：閉じるボタン検出時のしきい値を微調整<br>
-            Ver2.02：ラッキーセブン因子のアイコンが表示出来ない問題を修正<br>
-            Ver2.1：着順表、チムレスコア情報、出走ウマ娘画面に対応<br>
-            Ver2.11：レース詳細画面に対応<br>
-            Ver3.0：大体のスクロールする画面に対応<br>
-            Ver3.1：チャンミ号外の横配置に対応<br>
-            Ver3.11：ウマ娘一覧等最下部に固定ボタンがある画面でも連結されやすくなるよう修正<br>
+            Ver1.0：Initial release<br>
+            Ver1.01：Fixed adjacent image detection logic<br>
+            Ver1.02：Added output size toggle; fixed behavior when multiple close buttons are detected<br>
+            Ver1.1：Added support for reading images from clipboard and copying results to clipboard<br>
+            Ver1.11：Improved performance when loading many or high‑resolution images<br>
+            Ver1.12：Can now stitch even if the area below the Close button is missing<br>
+            Ver1.13：Fixed missing background color in output<br>
+            Ver1.2：Added progress indicator<br>
+            Ver1.3：Added header display option; hides scroll bars<br>
+            Ver1.4：Added support for alternate layouts such as other players’ horses<br>
+            Ver1.41：Supported wide screenshots from Google Play Games<br>
+            Ver1.42：Fixed distortion when mixing different layout images<br>
+            Ver1.43：Reduced seams at joins<br>
+            Ver1.44：Temporary support for slightly dark screenshots<br>
+            Ver1.45：Undetectable images are now appended at the end<br>
+            Ver1.5：Reduced misalignment during stitching<br>
+            Ver1.51：Detects faint Close buttons<br>
+            Ver1.6：Added Ctrl+V clipboard paste<br>
+            Ver1.61：Made close‑button detection more reliable<br>
+            Ver1.62：Internal tweaks for new features; adjusted adjacency threshold<br>
+            Ver2.0：Added skill‑icon overlay (beta) – thanks to <a href="https://umamusume.kouryaku.tools/" target="_blank" rel="noopener">U-tools</a>さん<br>
+            Ver2.01：Fine‑tuned close‑button detection threshold<br>
+            Ver2.02：Fixed Lucky Seven factor icon not showing<br>
+            Ver2.1：Added support for results table, team race score info, and starting order screen<br>
+            Ver2.11：Added support for race details screen<br>
+            Ver3.0：Supports most scrolling screens<br>
+            Ver3.1：Supports horizontal Champion’s Meeting extra editions<br>
+            Ver3.11：Easier stitching on screens with fixed bottom buttons such as the horse list<br>
             Ver3.12：同じウマ娘でもタブが異なる場合横に並べるように修正<br>
-            Ver3.2：特定レイアウトでスクロールバーに基づいて順序を特定するよう修正<br>
+            Ver3.2：Uses scroll‑bar position to order images for certain layouts<br>
             Ver3.21：スクロールバーの長さが異なる画像が混ざっている場合、スクロールバーに基づく配置を行わないよう修正、画像の取り込み順次第で結果が変わることがあった不具合を修正、その他色々不具合修正<br>
-            Ver3.22：因子名の位置取得ロジック変更<br>
-            Ver3.23：因子画面以外でスキルアイコン追加処理を行わないよう修正<br>
-            Ver3.24：青赤緑因子に？を追加しないよう修正<br>
-            Ver3.25：findLastIndexが呼び出せなかったら実行前にエラーになるよう修正<br>
-            Ver3.26：favicon追加<br>
+            Ver3.22：Changed factor‑name position detection<br>
+            Ver3.23：Skill‑icon overlay no longer runs outside the factor screen<br>
+            Ver3.24：No longer adds “?” to Blue/Red/Green factors<br>
+            Ver3.25：Throws error before execution if findLastIndex is unavailable<br>
+            Ver3.26：Added favicon<br>
           </p>
         </div>
       </section>
@@ -225,17 +225,17 @@
     </article>
   </div>
   <footer>
-    <p class="resources">ご意見ご要望:
+    <p class="resources">Feedback / Requests:
       <a href="https://twitter.com/lt900ed" target="_blank" rel="noopener">@lt900ed</a>
-      <a href="https://forms.gle/G5Mryrjc9uCBbUay5" target="_blank" rel="noopener">Googleフォーム</a>
+      <a href="https://forms.gle/G5Mryrjc9uCBbUay5" target="_blank" rel="noopener">Google Form</a>
     </p>
-    <p class="resources">アイコン提供:
+    <p class="resources">Icons by:
       <a href="https://twitter.com/38_3so" target="_blank" rel="noopener">@38_3so</a>
     </p>
-    <p class="resources">ご支援:
-      <a href="https://www.amazon.jp/hz/wishlist/ls/1EJOGGP8S1TS6?ref_=wl_share" target="_blank" rel="noopener">欲しいものリスト</a>
+    <p class="resources">Support us:
+      <a href="https://www.amazon.jp/hz/wishlist/ls/1EJOGGP8S1TS6?ref_=wl_share" target="_blank" rel="noopener">Wish List</a>
     </p>
-    <p class="resources"><a href="./">レシート因子メーカー</a></p>
+    <p class="resources"><a href="./">Receipt Spark Generator</a></p>
   </footer>
   <script src="./js/dict_skills.js"></script>
   <script src="./js/regexps.js"></script>
